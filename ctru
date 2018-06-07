@@ -92,6 +92,9 @@ function capture {
   # Strace pid
   (strace -yrTfs 1024 -e trace=sendto,connect,open,write -p $PID -o "$LOGDIR/strace-$PID.out" &)
 
+  # Get open files from lsof
+  (lsof -p $PID > $LOGDIR/eitest-files-$PID.log &)
+
   # Log some basic info about the connection and process
   echo "$TIME" >> "$LOGDIR$LOGFILE"
   ps aux | awk "(\$2 ~ /$PID/)"'{print $0}' >> "$LOGDIR$LOGFILE";
