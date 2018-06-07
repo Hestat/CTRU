@@ -74,7 +74,11 @@ else
 ###Connect
 function connect {
 # Watch for connections to sinkhole
+if [ -e /etc/systemd ]; then
  connect=$(ss -antp | grep "$CONNIP");
+ else
+ connect=$(netstat -tpn | grep $CONNIP);
+fi
 }
 ###
 
@@ -84,7 +88,11 @@ function capture {
  if [ -n "$connect" ]; then
 
   # Get pid from connection
+  if [ -e /etc/systemd ];then
   PID=$(echo "$connect" | grep -Eio "pid=[0-9]{1,}" | cut -d= -f2|sort|uniq);
+  else
+  PID=$(echo $connect | awk '{print$7}' | cut -d '/' -f1);
+  fi
 
   # Create pid log
   touch "$LOGDIR/strace-$PID.out"
