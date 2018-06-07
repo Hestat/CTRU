@@ -107,6 +107,7 @@ function install {
   checkroot
   configure
   preplog
+  echo -e "Please setup the IP you wish to track in $CONF"
   echo "Install complete.  To run scan, run 'xyz'"
 }
 ###
