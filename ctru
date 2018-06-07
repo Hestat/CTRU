@@ -4,13 +4,14 @@
 # https://sitecheck.sucuri.net/
 
 ###Set vars
+CONF="/etc/ctru.conf"
 SCRIPTNAME="$0"
 TIME=$(date +%Y.%m.%d.%H:%M:%S)
 LOGDIR="/var/log/eitest/"
 LOGFILE="eitest.log"
 ROTATEFILE="eitest"
 ROTATEDIR="/etc/logrotate.d/"
-CONNIP=$(grep TRACKIP /etc/ctru.conf | cut -d '"' -f2)
+CONNIP=$(grep TRACKIP $CONF | cut -d "=" -f2)
 SELECTION="$1"
 ###
 
@@ -25,8 +26,18 @@ fi
 
 ###Set conf
 
-
-
+function configure {
+	if [ ! -f "$CONF" ]; then
+		touch /etc/ctru.conf
+		echo -e "##IP you wish to track###" >> $CONF
+		echo -e "TRACKIP=" >> $CONF
+		echo -e >> $CONF
+		echo -e "##Email to sent alert to on hit###" >> $CONF
+		echo -e "MAILADDR=" >> $CONF
+	else
+		echo -e "Configuration file exists"
+	fi
+}
 
 ###Make log dir and file
 function preplog {
@@ -94,6 +105,7 @@ fi
 ###Install
 function install {
   checkroot
+  configure
   preplog
   echo "Install complete.  To run scan, run 'xyz'"
 }
