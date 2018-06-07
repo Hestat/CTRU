@@ -10,8 +10,7 @@ LOGDIR="/var/log/eitest/"
 LOGFILE="eitest.log"
 ROTATEFILE="eitest"
 ROTATEDIR="/etc/logrotate.d/"
-#CONNIP="192.42.116.41"
-CONNIP="172.18.18.3"
+CONNIP=$(grep TRACKIP /etc/ctru.conf | cut -d '"' -f2)
 SELECTION="$1"
 ###
 
@@ -23,6 +22,10 @@ if [[ $EUID -ne 0 ]]; then
 fi
 }
 ###
+
+###Set conf
+
+
 
 
 ###Make log dir and file
