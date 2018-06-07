@@ -1,0 +1,170 @@
+#!/bin/bash
+# Eitest investigation script
+# https://www.abuseat.org
+# https://sitecheck.sucuri.net/
+
+###Set vars
+SCRIPTNAME="$0"
+TIME=$(date +%Y.%m.%d.%H:%M:%S)
+LOGDIR="/var/log/eitest/"
+LOGFILE="eitest.log"
+ROTATEFILE="eitest"
+ROTATEDIR="/etc/logrotate.d/"
+#CONNIP="192.42.116.41"
+CONNIP="172.18.18.3"
+SELECTION="$1"
+###
+
+###Check for root
+function checkroot {
+if [[ $EUID -ne 0 ]]; then
+  echo "Must be run as root."
+  exit 0
+fi
+}
+###
+
+
+###Make log dir and file
+function preplog {
+#Create log dir
+ if [ ! -d "$LOGDIR" ]; then
+   mkdir -p "$LOGDIR"
+ fi
+ #Touch log file
+ if [ -z "$LOGDIR$LOGFILE" ]; then 
+  touch "$LOGDIR$LOGFILE"
+ fi
+ #Set up log rotate conf file
+ if [ -d "$ROTATEDIR" ]; then
+  touch "$ROTATEDIR$ROTATEFILE"
+  echo "
+   "$LOGDIR$LOGFILE"  {
+    compress
+    daily
+    notifempty
+    missingok
+    rotate 30
+    sharedscripts
+    postrotate
+        /bin/kill -HUP \`ps f | grep "$SCRIPTNAME" | grep -v grep | awk '{print $1}' 2>/dev/null\` 2> /dev/null || true
+    endscript
+  }" > "$ROTATEDIR$ROTATEFILE"
+else
+  echo "Logrotate not found at "$ROTATEDIR"... Please setup logrotate then run this again."
+  exit 1
+ fi
+}
+
+
+###Connect
+function connect {
+# Watch for connections to sinkhole
+ connect=$(ss -antp | grep "$CONNIP");
+}
+###
+
+###Capture
+function capture {
+# If connection found then capture data
+ if [ -n "$connect" ]; then
+
+  # Get pid from connection
+  PID=$(echo "$connect" | grep -Eio "pid=[0-9]{1,}" | cut -d= -f2|sort|uniq);
+
+  # Create pid log
+  touch "$LOGDIR/strace-$PID.out"
+
+  # Strace pid
+  (strace -yrTfs 1024 -e trace=sendto,connect,open,write -p $PID -o "$LOGDIR/strace-$PID.out" &)
+
+  # Log some basic info about the connection and process
+  echo "$TIME" >> "$LOGDIR$LOGFILE"
+  ps aux | awk "(\$2 ~ /$PID/)"'{print $0}' >> "$LOGDIR$LOGFILE";
+  echo $connect >> "$LOGDIR$LOGFILE";
+ else
+  exit 0
+fi
+}
+###
+
+###Install
+function install {
+  checkroot
+  preplog
+  echo "Install complete.  To run scan, run 'xyz'"
+}
+###
+
+###Scan
+function runscan {
+  checkroot
+  connect
+  capture
+}
+###
+
+###Constant Scan
+
+function conscan {
+  while true; do
+  checkroot
+  connect
+  capture
+
+sleep 0.2
+done
+}
+
+
+ 
+function askcmd {
+echo
+echo " (1) Install eitest"
+echo " (2) Run eitest scan"
+echo " (3) Setup continous scan"
+echo " (4) Exit"
+read cmd_option
+
+case $cmd_option in
+    1)
+        echo
+        install
+        ;;
+    2)
+        echo
+        runscan
+        ;;
+
+    3)  echo -e
+	conscan 2>/dev/null  &
+	;;
+
+    4)
+        echo
+        exit 0
+        ;;
+    *) 
+        echo
+        echo "invalid option";
+        sleep 1
+        askcmd
+        ;;
+esac
+echo
+}
+
+###Ask cmd if none specified
+if [ "$SELECTION"  == install ]; then
+  echo
+  install
+elif [ "$SELECTION" == scan ]; then
+  echo
+  runscan
+else
+  echo
+  askcmd
+fi
+###
+
+exit 0
