@@ -195,6 +195,9 @@ if [ "$SELECTION"  == install ]; then
 elif [ "$SELECTION" == scan ]; then
   echo
   runscan
+  elif [ "$SELECTION" == conscan ];then
+	  echo
+	  conscan
 else
   echo
   askcmd
