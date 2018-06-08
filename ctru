@@ -168,7 +168,7 @@ case $cmd_option in
 	while true; do
 	 checkroot
   	connect
-	if [[ $($connect|wc -l) >= 1 ]]; then
+	if [[ $($connect|wc -l) >= "1" ]]; then
 		capture
 	else
 	sleep 0.2
