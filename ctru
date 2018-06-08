@@ -134,7 +134,7 @@ function runscan {
 ###Constant Scan
 
 function conscan {
-  while "1" = "1"; do
+  while [ "1" = "1" ]; do
   #checkroot
   connect
   capture
