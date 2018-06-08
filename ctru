@@ -134,16 +134,14 @@ function runscan {
 ###Constant Scan
 
 function conscan {
-echo -e "0"
-while false; do
- #checkroot
+while true; do
+ checkroot
   connect
   capture
 
 sleep 0.2
 done
 
-echo "1"
 }
 
 
@@ -167,7 +165,13 @@ case $cmd_option in
         ;;
 
     3)  echo -e
-	conscan 2>/dev/null  &
+	while true; do
+	 checkroot
+  	connect
+  	capture
+	sleep 0.2
+	done
+	    #conscan 2>/dev/null  &
 	;;
 
     4)
