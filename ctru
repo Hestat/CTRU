@@ -168,8 +168,11 @@ case $cmd_option in
 	while true; do
 	 checkroot
   	connect
-  	capture
+  	if [ -e $connect ]; then
+		capture
+	else
 	sleep 0.2
+	fi
 	done
 	    #conscan 2>/dev/null  &
 	;;
