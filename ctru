@@ -135,7 +135,7 @@ function runscan {
 
 function conscan {
 echo -e "0"
-  while [ "1" = "1" ]; do
+while [ $($connect|wc -l) le 1 ]; do
  #checkroot
   connect
   capture
