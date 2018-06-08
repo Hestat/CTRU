@@ -132,16 +132,16 @@ function runscan {
 ###
 
 ###Constant Scan
-
-function conscan {
-  while [ "1" = "1" ]; do
+#
+#function conscan {
+#  while [ "1" = "1" ]; do
   #checkroot
-  connect
-  capture
+#  connect
+#  capture
 
-sleep 0.2
-done
-}
+#sleep 0.2
+#done
+#}
 
 
  
@@ -195,3 +195,15 @@ fi
 ###
 
 exit 0
+
+###Constant Scan
+
+function conscan {
+  while [ "1" = "1" ]; do
+  #checkroot
+  connect
+  capture
+
+sleep 0.2
+done
+}
