@@ -105,7 +105,7 @@ function capture {
 
   # Log some basic info about the connection and process
   echo "$TIME" >> "$LOGDIR$LOGFILE"
-  ps aux | awk "(\$2 ~ /$PID/)"'{print $0}' >> "$LOGDIR$LOGFILE";
+  #ps aux | awk "(\$2 ~ /$PID/)"'{print $0}' >> "$LOGDIR$LOGFILE";
   echo $connect >> "$LOGDIR$LOGFILE";
  else
   exit 0
@@ -134,7 +134,8 @@ function runscan {
 ###Constant Scan
 
 function conscan {
-  while true; do
+  while : 
+  do
   checkroot
   connect
   capture
