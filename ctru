@@ -134,15 +134,15 @@ function runscan {
 ###Constant Scan
 
 function conscan {
-while true; do
+#while true; do
  checkroot
  connect
- if [ $($connect|wc -l) >= "1" 2>/dev/null ]; then
+# if [ $($connect|wc -l) >= "1" 2>/dev/null ]; then
 	capture
-	else
-	sleep 0.2
-	fi
-	done
+#	else
+#	sleep 0.2
+#	fi
+#	done
 }
 
 
@@ -166,16 +166,10 @@ case $cmd_option in
         ;;
 
     3)  echo -e
-	#while true; do
-	#checkroot
-  	#connect
-	#if [ $($connect|wc -l) >= "1" 2>/dev/null ]; then
-	#	capture
-	#else
-	#sleep 0.2
-	#fi
-	#done
+	while true; do
 	conscan 2>/dev/null  &
+	sleep .2
+	done
 	;;
 
     4)
