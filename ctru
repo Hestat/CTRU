@@ -154,7 +154,7 @@ function conscan {
 
 #### Flags for additional features #####
 
-while getopt ":m" opt; do
+while getopts ":m" opt; do
 	case ${opt} in
 
 		m ) #find hits and send mail
