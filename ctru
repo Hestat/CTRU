@@ -155,7 +155,7 @@ function conscan {
 #### Flags for additional features #####
 
 while getopt ":m" opt; do
-	case {opt} in
+	case ${opt} in
 
 		m ) #find hits and send mail
 			if [[ $(logcheck) < 1 ]]; then #no hits found 
