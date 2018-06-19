@@ -12,6 +12,7 @@ LOGFILE="eitest.log"
 ROTATEFILE="eitest"
 ROTATEDIR="/etc/logrotate.d/"
 CONNIP=$(grep TRACKIP $CONF | cut -d "=" -f2)
+MAILTO=$(grep MAILADDR $CONF | cut -d "=" -f2) 
 SELECTION="$1"
 ###
 
@@ -37,6 +38,12 @@ function configure {
 	else
 		echo -e "Configuration file exists"
 	fi
+}
+
+###check the logs
+
+function logcheck {
+	find /var/log/eitest/ -maxdepth 1 -name '*.log' -type f -exec stat -c "%y %n" {} + | sort -r | head -n2 |awk '{print$4}' | xargs cat
 }
 
 ###Make log dir and file
@@ -145,8 +152,26 @@ function conscan {
 #	done
 }
 
+#### Flags for additional features #####
 
- 
+while getopt ":m" opt; do
+	case {opt} in
+
+		m ) #find hits and send mail
+			if [[ $(logcheck) < 1 ]]; then #no hits found 
+				exit 0
+			else 
+				echo -e "Subject: ALERT CTRU connection detected" > emailcontent
+				logcheck >> $emailcontent
+				cat $emailcontent | sendmail $MAILTO
+				exit 0
+			fi
+
+
+
+
+##########################################
+
 function askcmd {
 echo
 echo " (1) Install eitest"
