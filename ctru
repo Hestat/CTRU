@@ -14,7 +14,6 @@ ROTATEDIR="/etc/logrotate.d/"
 CONNIP=$(grep TRACKIP $CONF | cut -d "=" -f2)
 MAILTO=$(grep MAILADDR $CONF | cut -d "=" -f2) 
 SELECTION="$1"
-emailcontent=" "
 ###
 
 ###Check for root
@@ -162,9 +161,12 @@ while getopts ":m" opt; do
 			if [[ $(logcheck) < 1 ]]; then #no hits found 
 				exit 0
 			else 
+				touch /tmp/emailcontent
+				emailcontent=/tmp/emailcontent
 				echo -e "Subject: ALERT CTRU connection detected" >> $emailcontent
 				logcheck >> $emailcontent
 				cat $emailcontent | sendmail $MAILTO
+				rm /tmp/emailcontent
 				exit 0
 			fi
 	esac
