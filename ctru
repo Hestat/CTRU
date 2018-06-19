@@ -162,7 +162,7 @@ while getopts ":m" opt; do
 			if [[ $(logcheck) < 1 ]]; then #no hits found 
 				exit 0
 			else 
-				echo -e "Subject: ALERT CTRU connection detected" > $emailcontent
+				echo -e "Subject: ALERT CTRU connection detected" >> $emailcontent
 				logcheck >> $emailcontent
 				cat $emailcontent | sendmail $MAILTO
 				exit 0
