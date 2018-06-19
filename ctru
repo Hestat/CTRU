@@ -166,8 +166,8 @@ while getopt ":m" opt; do
 				cat $emailcontent | sendmail $MAILTO
 				exit 0
 			fi
-
-
+	esac
+done
 
 
 ##########################################
