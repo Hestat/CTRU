@@ -14,6 +14,7 @@ ROTATEDIR="/etc/logrotate.d/"
 CONNIP=$(grep TRACKIP $CONF | cut -d "=" -f2)
 MAILTO=$(grep MAILADDR $CONF | cut -d "=" -f2) 
 SELECTION="$1"
+emailcontent=" "
 ###
 
 ###Check for root
